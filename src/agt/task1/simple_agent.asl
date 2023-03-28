@@ -2,17 +2,20 @@
 
 /* Initial rules */
 /* Task 1.2.3 Start of your solution */
+// interference rules for even and odd numbers
+even(Number) :- Number mod 2 == 0.
+odd(Number) :- Number mod 2 == 1.
 /* Task 1.2.3 End of your solution */
 
 /* Initial goals */
-!start_sum(4,2). // uncomment for Task 1.2.1
-!start_sum(4,-2). // uncomment for Task 1.2.1
+//!start_sum(4,2). // uncomment for Task 1.2.1
+//!start_sum(4,-2). // uncomment for Task 1.2.1
 //!start_division(4,2). // uncomment for Task 1.2.2
 //!start_division(4,2.5). // uncomment for Task 1.2.2
 //!start_division(4,0). // uncomment for Task 1.2.2
 //!start_even_or_odd(4). // uncomment for Task 1.2.3
 //!start_even_or_odd(5). // uncomment for Task 1.2.3
-//!start_list_generation(0,4). // uncomment for Task 1.2.4
+!start_list_generation(0,4). // uncomment for Task 1.2.4
 //!print_list([0,1,2,3,4]). // uncomment for an example of handling a list with recursion
 
 /* 
@@ -29,15 +32,20 @@
 /* Task 1.2.1 Start of your solution */
 @compute_sum_task_1_2_1_plan
 +!compute_sum(X,Y,Sum) : true <-
-    .print("Implement Task 1.2.1").
+    //Sum = task1.sum(X,Y).   q: how can we access custom classes from agentspeak? I tried to implement according to chapter 7 in the books
+    Sum = X+Y.
 /* Task 1.2.1 End of your solution */
+
 
 @start_division_task_1_2_2_plan
 +!start_division(Dividend,Divisor) : true <- 
-    !compute_division(Dividend, Divisor, Quotient);
-    .print(Dividend, "/", Divisor, "=", Quotient).
+    !compute_division(Dividend, Divisor, Quotient).
 
-/* Task 1.2.2 Start of your solution */
+
+//@compute_division_plan
+//+!compute_division(Dividend, Divisor, Quotient) : (Divisor != 0) <-
+//   Quotient = Dividend / Divisor.
+    
 /* Task 1.2.2 End of your solution */
 
 /* 
@@ -47,8 +55,14 @@
  * Body: informs about the failure
 */
 @compute_division_failure_task_1_2_2_plan
--!compute_division(Dividend,Divisor,_) : true <-
+-!compute_division(Dividend,Divisor,_) : Divisor == 0 <-
     .print("Unable to compute the division of ", Dividend, " by ", Divisor).
+
+
+@compute_division_task_1_2_2_plan
++!compute_division(Dividend,Divisor,Quotient) : Divisor \== 0 <-
+    .print(Dividend, "/", Divisor, "=", Dividend / Divisor).
+    
 
 /* 
  * Plan for reacting to the addition of the goal !start_even_or_odd(X)
@@ -93,6 +107,17 @@
 
 /* Task 1.2.4 Start of your solution */
 // You are allowed to use a triggering event other than the one provided 
+
++!compute_list_recursive(Start, End, Acc, List) : Start == End <- 
+    List = [Start].
+
++!compute_list_recursive(Start, End, Acc, List) : Start < End <- 
+    !compute_sum(Start, 1, Sum);
+    !compute_list_recursive(Sum, End, _, Acc);
+    .concat([Start], Acc, List).
+
++!compute_list(Start, End, Acc, List) : true <-
+    !compute_list_recursive(Start, End, _, List).
 /* Task 1.2.4 End of your solution */
 
 /* 
